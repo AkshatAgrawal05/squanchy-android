@@ -6,6 +6,5 @@ import net.squanchy.onboarding.account.AccountOnboardingActivity
 
 enum class OnboardingPage(val activityClass: Class<out Activity>) {
 
-    ACCOUNT(AccountOnboardingActivity::class.java);
-
+    ACCOUNT(AccountOnboardingActivity::class.java)
 }
