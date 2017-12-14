@@ -8,16 +8,12 @@ buildscript {
 
     dependencies {
         classpath buildScript.android
-        classpath buildScript.gradleStaticAnalysisPlugin
+        classpath buildScript.gradleCodeQualityToolsPlugin
         classpath buildScript.gradleVersionsPlugin
         classpath buildScript.googleServices
         classpath buildScript.jaCoCo
         classpath buildScript.playPublisher
     }
-}
-
-plugins {
-    id 'io.gitlab.arturbosch.detekt' version '1.0.0.RC5-3'
 }
 
 def teamPropsFile(propsFile) {
@@ -26,12 +22,8 @@ def teamPropsFile(propsFile) {
 }
 
 apply from: 'dependencies.gradle'
-
-detekt {
-    profile('main') {
-        filters = '.*'        // Nothing to check in the root project
-    }
-}
+apply plugin: 'com.vanniktech.code.quality.tools'
+apply from: teamPropsFile('static-analysis.gradle')
 
 subprojects {
     buildscript {
@@ -50,7 +42,4 @@ subprojects {
     }
 
     apply plugin: 'com.github.ben-manes.versions'
-    apply from: teamPropsFile('static-analysis.gradle')
 }
-
-apply from: teamPropsFile('android-code-quality.gradle')

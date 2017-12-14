@@ -1,36 +1,56 @@
-apply plugin: 'com.novoda.static-analysis'
+apply plugin: 'com.vanniktech.code.quality.tools'
 
-staticAnalysis {
-    penalty {
-        maxErrors = 0
-        maxWarnings = 0
+final String GENERATED_FILES = '**/gen/**'
+final String KOTLIN_SOURCE_FILES = '**/*.kt'
+final String JAVA_SOURCE_FILES = '**/*.java'
+final String TEST_SOURCE_FILES = '**/src/test*/**'
+final String ANDROID_TEST_SOURCE_FILES = '**/src/androidTest*/**'
+
+codeQualityTools {
+    failEarly = false
+    xmlReports = true
+    htmlReports = true
+    textReports = true
+
+    findbugs {
+        toolVersion = findbugsVersion
+        excludeFilter = teamPropsFile('static-analysis/findbugs-excludes.xml')
+        htmlReports = false
     }
 
     checkstyle {
-        toolVersion checkstyleVersion
-        exclude project.fileTree('src/test/java')
-        exclude project.fileTree('src/testDebug/java')
-        configFile teamPropsFile('static-analysis/checkstyle-modules.xml')
-        includeVariants { variant -> excludeTestAndRelease(variant) }
+        toolVersion = checkstyleVersion
+        configFile = teamPropsFile('static-analysis/checkstyle-modules.xml')
+        include = [JAVA_SOURCE_FILES]
+        exclude = [GENERATED_FILES, KOTLIN_SOURCE_FILES, TEST_SOURCE_FILES, ANDROID_TEST_SOURCE_FILES]
     }
 
     pmd {
-        toolVersion pmdVersion
-        exclude project.fileTree('src/test/java')
-        exclude project.fileTree('src/testDebug/java')
-
-        ruleSetFiles = rootProject.files('team-props/static-analysis/pmd-rules.xml')
-        ruleSets = []   // Note: this is a workaround to make the <exclude-pattern>s in pmd-rules.xml actually work
-        includeVariants { variant -> excludeTestAndRelease(variant) }
+        toolVersion = pmdVersion
+        ruleSetFile = teamPropsFile('static-analysis/pmd-rules.xml')
+        include = [JAVA_SOURCE_FILES]
+        exclude = [GENERATED_FILES, KOTLIN_SOURCE_FILES, TEST_SOURCE_FILES, ANDROID_TEST_SOURCE_FILES]
     }
 
-    findbugs {
-        toolVersion findbugsVersion
-        excludeFilter teamPropsFile('static-analysis/findbugs-excludes.xml')
-        includeVariants { variant -> excludeTestAndRelease(variant) }
+    lint {
+        abortOnError = true
+        warningsAsErrors = true
     }
-}
 
-static boolean excludeTestAndRelease(variant) {
-    return !variant.name.toLowerCase().endsWith('test') && !variant.name.toLowerCase().endsWith('release')
+    ktlint {
+        toolVersion = ktLintVersion
+    }
+
+    detekt {
+        toolVersion = detektVersion
+        config = teamPropsFile('static-analysis/detekt-config.yml')
+    }
+
+    cpd {
+        enabled = false
+    }
+
+    errorProne {
+        enabled = false
+    }
 }

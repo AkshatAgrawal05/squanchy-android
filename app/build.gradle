@@ -6,10 +6,6 @@ buildscript {
     }
 }
 
-plugins {
-    id 'io.gitlab.arturbosch.detekt'
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -95,8 +91,6 @@ android {
 
     lintOptions {
         lintConfig teamPropsFile('static-analysis/lint-config.xml')
-        abortOnError true
-        warningsAsErrors true
     }
 
     sourceSets {
@@ -110,29 +104,6 @@ private static boolean isNotRunningOnCI() {
 
 play {
     jsonFile = teamPropsFile('play-store-keys.json')
-}
-
-detekt {
-    profile = 'main'
-
-    profile('main') {
-        input = "$projectDir/src/main/java"
-        config = teamPropsFile('static-analysis/detekt-config.yml')
-        filters = '.*test.*,.*/resources/.*,.*/tmp/.*'
-        output = "$projectDir/build/reports/detekt"
-    }
-
-    idea {
-        path = "$rootDir/.idea"
-        codeStyleScheme = "$rootDir/.idea/codeStyleSettings.xml"
-        inspectionsProfile = "$rootDir/.idea/inspectionProfiles/Squanchy.xml"
-        report = "$projectDir/build/reports/detekt-idea"
-        mask = "*.kt,"
-    }
-}
-
-project.afterEvaluate {
-    check.dependsOn tasks['detektCheck']
 }
 
 dependencies {
