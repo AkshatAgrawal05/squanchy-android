@@ -7,7 +7,7 @@ final String TEST_SOURCE_FILES = '**/src/test*/**'
 final String ANDROID_TEST_SOURCE_FILES = '**/src/androidTest*/**'
 
 codeQualityTools {
-    failEarly = false
+    failEarly = true
     xmlReports = true
     htmlReports = true
     textReports = true

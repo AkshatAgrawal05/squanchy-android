@@ -91,6 +91,8 @@ android {
 
     lintOptions {
         lintConfig teamPropsFile('static-analysis/lint-config.xml')
+        abortOnError true
+        warningsAsErrors true
     }
 
     sourceSets {
